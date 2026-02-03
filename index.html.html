@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valentine 💘</title>
+
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Comic Sans MS', cursive;
+    background: linear-gradient(135deg, #ff758c, #ff7eb3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .card {
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+    text-align: center;
+    width: 90%;
+    max-width: 360px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    z-index: 10;
+  }
+
+  h1 { color: #ff3366; }
+  p { color: #444; }
+
+  button {
+    padding: 12px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    margin: 10px;
+  }
+
+  #yesBtn {
+    background: #ff3366;
+    color: white;
+  }
+
+  #noBtn {
+    background: #adb5bd;
+    color: white;
+    position: absolute;
+    transform-origin: center;
+  }
+
+  /* Floating hearts */
+  .heart {
+    position: fixed;
+    bottom: -20px;
+    font-size: 20px;
+    animation: float 6s linear infinite;
+    opacity: 0.8;
+  }
+
+  @keyframes float {
+    to {
+      transform: translateY(-120vh);
+      opacity: 0;
+    }
+  }
+
+  /* Popup */
+  .popup {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+  }
+
+  .popup-content {
+    background: white;
+    padding: 20px;
+    border-radius: 16px;
+    text-align: center;
+    width: 80%;
+    max-width: 300px;
+  }
+
+  /* Confetti */
+  .confetti {
+    position: fixed;
+    top: -10px;
+    font-size: 20px;
+    animation: confettiFall 3s linear forwards;
+  }
+
+  @keyframes confettiFall {
+    to {
+      transform: translateY(120vh) rotate(360deg);
+      opacity: 0;
+    }
+  }
+
+  .timer {
+    font-size: 14px;
+    color: #ff3366;
+    margin-top: 10px;
+  }
+</style>
+</head>
+
+<body>
+
+<audio id="music" loop>
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_3a88f3c2c1.mp3" type="audio/mp3">
+</audio>
+
+<div class="card" id="card">
+  <h1>💖 Hey Modak 💖</h1>
+  <p>Will you be my Valentine? 🌹</p>
+
+  <div class="timer" id="timer"></div>
+
+  <button id="yesBtn">Yes 😍</button>
+  <button id="noBtn">No 🙄</button>
+</div>
+
+<div class="popup" id="popup">
+  <div class="popup-content">
+    <h2>ARE YOU REALLY SURE? 😳</h2>
+    <p>Love is watching you right now 💕</p>
+    <button onclick="closePopup()">Okay okay 😅</button>
+  </div>
+</div>
+
+<script>
+  const noBtn = document.getElementById("noBtn");
+  const yesBtn = document.getElementById("yesBtn");
+  const card = document.getElementById("card");
+  const popup = document.getElementById("popup");
+  const music = document.getElementById("music");
+  const timer = document.getElementById("timer");
+
+  let musicStarted = false;
+  let scale = 1;
+
+  const funnyTexts = [
+    "Still no? 😏",
+    "Getting smaller 😂",
+    "Nice try!",
+    "Hard to click now huh 😜",
+    "Love wins 💘"
+  ];
+
+  function moveNo() {
+    scale -= 0.1;
+    noBtn.style.transform = `scale(${scale})`;
+
+    const x = Math.random() * (window.innerWidth - 80);
+    const y = Math.random() * (window.innerHeight - 50);
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+
+    noBtn.innerText = funnyTexts[Math.floor(Math.random() * funnyTexts.length)];
+    popup.style.display = "flex";
+  }
+
+  noBtn.addEventListener("mouseover", moveNo);
+  noBtn.addEventListener("touchstart", moveNo);
+
+  function closePopup() {
+    popup.style.display = "none";
+  }
+
+  yesBtn.addEventListener("click", () => {
+    confettiBoom();
+    card.innerHTML = `
+      <h1>🎉 SHE SAID YES 🎉</h1>
+      <p>You selected a premium human 💕</p>
+      <p>Screenshot proof required 📸😌</p>
+      <p>Happy Valentine’s Day, Modak 💖</p>
+      <p>Now you’re officially mine 🥰</p>
+    `;
+  });
+
+  // Confetti
+  function confettiBoom() {
+    for (let i = 0; i < 80; i++) {
+      const c = document.createElement("div");
+      c.className = "confetti";
+      c.innerText = "🎉";
+      c.style.left = Math.random() * 100 + "vw";
+      c.style.animationDuration = (2 + Math.random() * 2) + "s";
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 3000);
+    }
+  }
+
+  // Floating hearts
+  setInterval(() => {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerText = "💓";
+    heart.style.left = Math.random() * 100 + "vw";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 7000);
+  }, 300);
+
+  // Music start
+  document.body.addEventListener("click", () => {
+    if (!musicStarted) {
+      music.play();
+      musicStarted = true;
+    }
+  });
+
+  // Countdown (10 minutes)
+  let time = 600;
+  setInterval(() => {
+    const min = Math.floor(time / 60);
+    const sec = time % 60;
+    timer.innerText = `⏳ Decide fast: ${min}:${sec.toString().padStart(2, '0')}`;
+    if (time > 0) time--;
+  }, 1000);
+</script>
+
+</body>
+</html>
